@@ -14,7 +14,7 @@ class MedicalRecordResource extends Resource
 {
     protected static ?string $model = MedicalRecord::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
 
     public static function form(Form $form): Form
     {
@@ -39,10 +39,10 @@ class MedicalRecordResource extends Resource
                         Forms\Components\Repeater::make('items')
                             ->schema([
                                 Forms\Components\Select::make('medicine_id')
-                                    ->relationship('medicine', 'name')
+                                    ->label('Medicine')
+                                    ->options(\App\Models\Medicine::pluck('name', 'id'))
                                     ->required()
                                     ->searchable()
-                                    ->preload()
                                     ->live()
                                     ->afterStateUpdated(function ($state, Forms\Set $set) {
                                         // Just to trigger update on quantity helper text,
@@ -87,13 +87,26 @@ class MedicalRecordResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('patient.name')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('date')
+                    ->date()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('diagnosis')
+                    ->limit(50)
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

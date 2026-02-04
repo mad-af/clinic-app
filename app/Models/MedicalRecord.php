@@ -17,4 +17,15 @@ class MedicalRecord extends Model
     {
         return $this->hasMany(MedicalRecordItem::class);
     }
+
+    protected static function booted()
+    {
+        static::deleting(function (MedicalRecord $record) {
+            foreach ($record->items as $item) {
+                if ($item->medicine) {
+                    $item->medicine->increment('stock', $item->quantity);
+                }
+            }
+        });
+    }
 }
