@@ -2,21 +2,29 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\MedicineResource\Pages;
-use App\Models\Medicine;
+use App\Filament\Resources\DoctorResource\Pages;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
-class MedicineResource extends Resource
+class DoctorResource extends Resource
 {
-    protected static ?string $model = Medicine::class;
+    protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-beaker';
+    protected static ?string $label = 'Doctor';
+
+    protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
     protected static ?string $navigationGroup = 'Master Data';
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->where('role', 'doctor');
+    }
 
     public static function form(Form $form): Form
     {
@@ -25,12 +33,16 @@ class MedicineResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('stock')
+                Forms\Components\TextInput::make('email')
+                    ->email()
                     ->required()
-                    ->numeric()
-                    ->default(0),
-                Forms\Components\Textarea::make('description')
-                    ->columnSpanFull(),
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('password')
+                    ->password()
+                    ->dehydrated(fn ($state) => filled($state))
+                    ->required(fn (string $context): bool => $context === 'create'),
+                Forms\Components\Hidden::make('role')
+                    ->default('doctor'),
             ]);
     }
 
@@ -40,22 +52,9 @@ class MedicineResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('stock')
-                    ->numeric()
-                    ->sortable()
-                    ->color(fn ($record): string => match (true) {
-                        $record->stock <= 10 => 'danger',
-                        $record->stock <= 50 => 'warning',
-                        default => 'success',
-                    }),
-                Tables\Columns\TextColumn::make('description')
-                    ->limit(50)
+                Tables\Columns\TextColumn::make('email')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -68,7 +67,7 @@ class MedicineResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    //
+                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -76,16 +75,17 @@ class MedicineResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            DoctorResource\RelationManagers\ShiftsRelationManager::class,
+            DoctorResource\RelationManagers\AppointmentsRelationManager::class,
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListMedicines::route('/'),
-            'create' => Pages\CreateMedicine::route('/create'),
-            'edit' => Pages\EditMedicine::route('/{record}/edit'),
+            'index' => Pages\ListDoctors::route('/'),
+            'create' => Pages\CreateDoctor::route('/create'),
+            'edit' => Pages\EditDoctor::route('/{record}/edit'),
         ];
     }
 }
