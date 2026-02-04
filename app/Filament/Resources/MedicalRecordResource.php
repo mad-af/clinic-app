@@ -44,6 +44,8 @@ class MedicalRecordResource extends Resource
                                     ->required()
                                     ->searchable()
                                     ->live()
+                                    ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+                                    ->rule('distinct')
                                     ->afterStateUpdated(function ($state, Forms\Set $set) {
                                         // Just to trigger update on quantity helper text,
                                         // though live() should handle it via dependent get() calls
