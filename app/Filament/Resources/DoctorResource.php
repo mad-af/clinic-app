@@ -41,6 +41,10 @@ class DoctorResource extends Resource
                     ->password()
                     ->dehydrated(fn ($state) => filled($state))
                     ->required(fn (string $context): bool => $context === 'create'),
+                Forms\Components\TextInput::make('service_fee')
+                    ->required()
+                    ->numeric()
+                    ->prefix('Rp'),
                 Forms\Components\Hidden::make('role')
                     ->default('doctor'),
             ]);
@@ -54,6 +58,9 @@ class DoctorResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('service_fee')
+                    ->money('IDR')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

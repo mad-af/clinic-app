@@ -13,6 +13,11 @@ class MedicalRecord extends Model
         return $this->belongsTo(Patient::class);
     }
 
+    public function patientVisit()
+    {
+        return $this->belongsTo(PatientVisit::class);
+    }
+
     public function items()
     {
         return $this->hasMany(MedicalRecordItem::class);

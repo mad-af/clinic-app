@@ -66,7 +66,12 @@ class EditMedicalRecord extends EditRecord
                 $record->items()->create([
                     'medicine_id' => $item['medicine_id'],
                     'quantity' => $item['quantity'],
+                    'price' => $medicine->price,
                 ]);
+            }
+
+            if ($record->patientVisit) {
+                $record->patientVisit->recalculateTotal();
             }
 
             return $record;

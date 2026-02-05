@@ -2,19 +2,19 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\MedicineResource\Pages;
-use App\Models\Medicine;
+use App\Filament\Resources\ProcedureResource\Pages;
+use App\Models\Procedure;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class MedicineResource extends Resource
+class ProcedureResource extends Resource
 {
-    protected static ?string $model = Medicine::class;
+    protected static ?string $model = Procedure::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-beaker';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $navigationGroup = 'Master Data';
 
@@ -28,14 +28,7 @@ class MedicineResource extends Resource
                 Forms\Components\TextInput::make('price')
                     ->required()
                     ->numeric()
-                    ->prefix('Rp')
-                    ->default(0),
-                Forms\Components\TextInput::make('stock')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                Forms\Components\Textarea::make('description')
-                    ->columnSpanFull(),
+                    ->prefix('Rp'),
             ]);
     }
 
@@ -48,17 +41,6 @@ class MedicineResource extends Resource
                 Tables\Columns\TextColumn::make('price')
                     ->money('IDR')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('stock')
-                    ->numeric()
-                    ->sortable()
-                    ->color(fn ($record): string => match (true) {
-                        $record->stock <= 10 => 'danger',
-                        $record->stock <= 50 => 'warning',
-                        default => 'success',
-                    }),
-                Tables\Columns\TextColumn::make('description')
-                    ->limit(50)
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -76,7 +58,7 @@ class MedicineResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    //
+                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -91,9 +73,9 @@ class MedicineResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListMedicines::route('/'),
-            'create' => Pages\CreateMedicine::route('/create'),
-            'edit' => Pages\EditMedicine::route('/{record}/edit'),
+            'index' => Pages\ListProcedures::route('/'),
+            'create' => Pages\CreateProcedure::route('/create'),
+            'edit' => Pages\EditProcedure::route('/{record}/edit'),
         ];
     }
 }
