@@ -110,7 +110,7 @@ class InvoiceResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\Action::make('mark_paid')
                     ->label('Mark as Paid')
                     ->icon('heroicon-o-check-circle')
@@ -125,7 +125,9 @@ class InvoiceResource extends Resource
                     ->visible(fn (Invoice $record) => $record->status === 'Unpaid'),
             ])
             ->bulkActions([
-                // Tables\Actions\DeleteBulkAction::make(),
+                // Tables\Actions\BulkActionGroup::make([
+                //    Tables\Actions\DeleteBulkAction::make(),
+                // ]),
             ]);
     }
 
@@ -140,8 +142,12 @@ class InvoiceResource extends Resource
     {
         return [
             'index' => Pages\ListInvoices::route('/'),
-            'create' => Pages\CreateInvoice::route('/create'),
-            'edit' => Pages\EditInvoice::route('/{record}/edit'),
+            'view' => Pages\ViewInvoice::route('/{record}'),
         ];
+    }
+
+    public static function canCreate(): bool
+    {
+        return false;
     }
 }

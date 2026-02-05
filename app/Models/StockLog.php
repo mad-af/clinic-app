@@ -13,8 +13,8 @@ class StockLog extends Model
         return $this->belongsTo(Medicine::class);
     }
 
-    public function employee()
+    public function user()
     {
-        return $this->belongsTo(User::class, 'employee_id');
+        return $this->belongsTo(User::class);
     }
 }

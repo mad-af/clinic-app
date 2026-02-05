@@ -39,7 +39,7 @@ class StockLogResource extends Resource
                 Tables\Columns\TextColumn::make('new_stock')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('employee.name')
+                Tables\Columns\TextColumn::make('user.name')
                     ->label('Changed By')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('ip_address')

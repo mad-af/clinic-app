@@ -35,10 +35,14 @@ class CreateMedicalRecord extends CreateRecord
                 // Log stock deduction
                 StockLog::create([
                     'medicine_id' => $medicine->id,
+                    'action' => 'deduction',
+                    'quantity' => $item['quantity'],
                     'old_stock' => $oldStock,
                     'new_stock' => $newStock,
-                    'employee_id' => auth()->id(),
+                    'user_id' => auth()->id(),
+                    'reason' => 'Used in Medical Record',
                     'ip_address' => request()->ip(),
+                    'user_agent' => request()->userAgent(),
                 ]);
 
                 $record->items()->create([

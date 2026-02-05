@@ -12,6 +12,8 @@ class PatientVisit extends Model
         'total_amount',
     ];
 
+    protected $casts = [];
+
     public function patient()
     {
         return $this->belongsTo(Patient::class);
@@ -48,11 +50,11 @@ class PatientVisit extends Model
     {
         $proceduresTotal = $this->patientVisitProcedures->sum('price');
         $doctorFee = $this->doctor->service_fee ?? 0;
-        
+
         // Medicines
         $medicinesTotal = 0;
         if ($this->medicalRecord) {
-            $medicinesTotal = $this->medicalRecord->items->sum(fn($item) => $item->price * $item->quantity);
+            $medicinesTotal = $this->medicalRecord->items->sum(fn ($item) => $item->price * $item->quantity);
         }
 
         $this->total_amount = $proceduresTotal + $doctorFee + $medicinesTotal;

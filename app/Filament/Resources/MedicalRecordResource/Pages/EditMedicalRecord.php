@@ -4,12 +4,11 @@ namespace App\Filament\Resources\MedicalRecordResource\Pages;
 
 use App\Filament\Resources\MedicalRecordResource;
 use App\Models\Medicine;
+use App\Models\StockLog;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-
-use App\Models\StockLog;
 
 class EditMedicalRecord extends EditRecord
 {
@@ -53,10 +52,14 @@ class EditMedicalRecord extends EditRecord
                     // Log stock refund
                     StockLog::create([
                         'medicine_id' => $medicine->id,
+                        'action' => 'refund',
+                        'quantity' => $item->quantity,
                         'old_stock' => $oldStock,
                         'new_stock' => $newStock,
-                        'employee_id' => auth()->id(),
+                        'user_id' => auth()->id(),
+                        'reason' => 'Refunded from Medical Record',
                         'ip_address' => request()->ip(),
+                        'user_agent' => request()->userAgent(),
                     ]);
                 }
                 $item->delete();
@@ -81,10 +84,14 @@ class EditMedicalRecord extends EditRecord
                 // Log stock deduction
                 StockLog::create([
                     'medicine_id' => $medicine->id,
+                    'action' => 'deduction',
+                    'quantity' => $item['quantity'],
                     'old_stock' => $oldStock,
                     'new_stock' => $newStock,
-                    'employee_id' => auth()->id(),
+                    'user_id' => auth()->id(),
+                    'reason' => 'Used in Medical Record',
                     'ip_address' => request()->ip(),
+                    'user_agent' => request()->userAgent(),
                 ]);
 
                 $record->items()->create([

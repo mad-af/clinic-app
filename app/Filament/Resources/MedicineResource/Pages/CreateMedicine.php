@@ -19,10 +19,14 @@ class CreateMedicine extends CreateRecord
         if (isset($data['stock']) && $data['stock'] > 0) {
             StockLog::create([
                 'medicine_id' => $record->id,
+                'action' => 'initial',
+                'quantity' => $data['stock'],
                 'old_stock' => 0,
                 'new_stock' => $data['stock'],
-                'employee_id' => auth()->id(),
+                'user_id' => auth()->id(),
+                'reason' => 'Initial stock',
                 'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent(),
             ]);
         }
 

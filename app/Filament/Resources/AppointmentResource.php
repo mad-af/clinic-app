@@ -74,6 +74,15 @@ class AppointmentResource extends Resource
                     ->relationship('patient', 'name')
                     ->searchable()
                     ->preload(),
+                Forms\Components\Select::make('status')
+                    ->options([
+                        'pending' => 'Pending',
+                        'confirmed' => 'Confirmed',
+                        'completed' => 'Completed',
+                        'cancelled' => 'Cancelled',
+                    ])
+                    ->required()
+                    ->default('pending'),
                 Forms\Components\DateTimePicker::make('appointment_time')
                     ->required()
                     ->seconds(false)
@@ -130,6 +139,14 @@ class AppointmentResource extends Resource
                     ->sortable()
                     ->searchable()
                     ->placeholder('No Patient'),
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'pending' => 'gray',
+                        'confirmed' => 'info',
+                        'completed' => 'success',
+                        'cancelled' => 'danger',
+                    }),
                 Tables\Columns\TextColumn::make('appointment_time')
                     ->dateTime('M d, Y H:i')
                     ->sortable(),

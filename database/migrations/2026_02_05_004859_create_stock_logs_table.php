@@ -14,10 +14,14 @@ return new class extends Migration
         Schema::create('stock_logs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('medicine_id')->constrained()->cascadeOnDelete();
+            $table->string('action');
+            $table->integer('quantity');
             $table->integer('old_stock');
             $table->integer('new_stock');
-            $table->foreignId('employee_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->string('reason')->nullable();
             $table->string('ip_address')->nullable();
+            $table->string('user_agent')->nullable();
             $table->timestamps();
         });
     }

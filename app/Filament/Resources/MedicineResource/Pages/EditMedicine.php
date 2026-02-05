@@ -32,10 +32,14 @@ class EditMedicine extends EditRecord
         if ($oldStock !== $newStock) {
             StockLog::create([
                 'medicine_id' => $record->id,
+                'action' => 'update',
+                'quantity' => abs($newStock - $oldStock),
                 'old_stock' => $oldStock,
                 'new_stock' => $newStock,
-                'employee_id' => auth()->id(),
+                'user_id' => auth()->id(),
+                'reason' => 'Manual stock update',
                 'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent(),
             ]);
         }
 

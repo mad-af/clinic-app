@@ -90,10 +90,14 @@ class CreateStockAdjustment extends CreateRecord
             // Create Stock Log
             StockLog::create([
                 'medicine_id' => $medicine->id,
+                'action' => 'adjustment',
+                'quantity' => abs($adjustmentAmount),
                 'old_stock' => $oldStock,
                 'new_stock' => $newStock,
-                'employee_id' => auth()->id(),
+                'user_id' => auth()->id(),
+                'reason' => $data['notes'] ?? 'Manual adjustment',
                 'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent(),
             ]);
 
             // Create Stock Adjustment Record (The main resource record)
