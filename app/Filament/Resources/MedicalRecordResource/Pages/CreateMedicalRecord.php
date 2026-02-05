@@ -3,11 +3,11 @@
 namespace App\Filament\Resources\MedicalRecordResource\Pages;
 
 use App\Filament\Resources\MedicalRecordResource;
-use Filament\Actions;
+use App\Models\Medicine;
+use App\Models\StockLog;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-use App\Models\Medicine;
 
 class CreateMedicalRecord extends CreateRecord
 {
@@ -28,7 +28,18 @@ class CreateMedicalRecord extends CreateRecord
                     throw new \Exception("Insufficient stock for medicine: {$medicine->name}");
                 }
 
+                $oldStock = $medicine->stock;
                 $medicine->decrement('stock', $item['quantity']);
+                $newStock = $medicine->stock;
+
+                // Log stock deduction
+                StockLog::create([
+                    'medicine_id' => $medicine->id,
+                    'old_stock' => $oldStock,
+                    'new_stock' => $newStock,
+                    'employee_id' => auth()->id(),
+                    'ip_address' => request()->ip(),
+                ]);
 
                 $record->items()->create([
                     'medicine_id' => $item['medicine_id'],

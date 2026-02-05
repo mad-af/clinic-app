@@ -9,6 +9,8 @@ use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
+use App\Models\StockLog;
+
 class EditMedicalRecord extends EditRecord
 {
     protected static string $resource = MedicalRecordResource::class;
@@ -44,7 +46,18 @@ class EditMedicalRecord extends EditRecord
             foreach ($record->items()->get() as $item) {
                 $medicine = Medicine::lockForUpdate()->find($item->medicine_id);
                 if ($medicine) {
+                    $oldStock = $medicine->stock;
                     $medicine->increment('stock', $item->quantity);
+                    $newStock = $medicine->stock;
+
+                    // Log stock refund
+                    StockLog::create([
+                        'medicine_id' => $medicine->id,
+                        'old_stock' => $oldStock,
+                        'new_stock' => $newStock,
+                        'employee_id' => auth()->id(),
+                        'ip_address' => request()->ip(),
+                    ]);
                 }
                 $item->delete();
             }
@@ -61,7 +74,18 @@ class EditMedicalRecord extends EditRecord
                     throw new \Exception("Insufficient stock for medicine: {$medicine->name}");
                 }
 
+                $oldStock = $medicine->stock;
                 $medicine->decrement('stock', $item['quantity']);
+                $newStock = $medicine->stock;
+
+                // Log stock deduction
+                StockLog::create([
+                    'medicine_id' => $medicine->id,
+                    'old_stock' => $oldStock,
+                    'new_stock' => $newStock,
+                    'employee_id' => auth()->id(),
+                    'ip_address' => request()->ip(),
+                ]);
 
                 $record->items()->create([
                     'medicine_id' => $item['medicine_id'],
