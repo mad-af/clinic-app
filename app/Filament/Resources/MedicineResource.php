@@ -25,11 +25,6 @@ class MedicineResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('price')
-                    ->required()
-                    ->numeric()
-                    ->prefix('Rp')
-                    ->default(0),
                 Forms\Components\TextInput::make('stock')
                     ->required()
                     ->numeric()
@@ -45,9 +40,6 @@ class MedicineResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('price')
-                    ->money('IDR')
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('stock')
                     ->numeric()
                     ->sortable()

@@ -163,7 +163,7 @@ class AppointmentResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -184,7 +184,7 @@ class AppointmentResource extends Resource
         return [
             'index' => Pages\ListAppointments::route('/'),
             'create' => Pages\CreateAppointment::route('/create'),
-            'edit' => Pages\EditAppointment::route('/{record}/edit'),
+            'view' => Pages\ViewAppointment::route('/{record}'),
         ];
     }
 }

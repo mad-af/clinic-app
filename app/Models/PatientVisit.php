@@ -36,11 +36,6 @@ class PatientVisit extends Model
             ->withTimestamps();
     }
 
-    public function medicalRecord()
-    {
-        return $this->hasOne(MedicalRecord::class);
-    }
-
     public function invoice()
     {
         return $this->hasOne(Invoice::class);
@@ -51,13 +46,7 @@ class PatientVisit extends Model
         $proceduresTotal = $this->patientVisitProcedures->sum('price');
         $doctorFee = $this->doctor->service_fee ?? 0;
 
-        // Medicines
-        $medicinesTotal = 0;
-        if ($this->medicalRecord) {
-            $medicinesTotal = $this->medicalRecord->items->sum(fn ($item) => $item->price * $item->quantity);
-        }
-
-        $this->total_amount = $proceduresTotal + $doctorFee + $medicinesTotal;
+        $this->total_amount = $proceduresTotal + $doctorFee;
         $this->save();
 
         // Update Invoice if exists

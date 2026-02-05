@@ -113,7 +113,6 @@ class DoctorConsoleResource extends Resource
 
                             // Create Medical Record
                             $medicalRecord = MedicalRecord::create([
-                                'patient_visit_id' => $visit->id,
                                 'patient_id' => $record->patient_id,
                                 'date' => now(),
                                 'diagnosis' => $data['diagnosis'],
@@ -148,7 +147,7 @@ class DoctorConsoleResource extends Resource
                                         $medicalRecord->items()->create([
                                             'medicine_id' => $medicine->id,
                                             'quantity' => $itemData['quantity'],
-                                            'price' => $medicine->price,
+                                            'price' => 0,
                                         ]);
                                     }
                                 }

@@ -8,9 +8,7 @@ class Medicine extends Model
 {
     protected $guarded = [];
 
-    protected $casts = [
-        'price' => 'decimal:2',
-    ];
+    protected $casts = [];
 
     public function medicalRecordItems()
     {
